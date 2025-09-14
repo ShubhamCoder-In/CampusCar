@@ -20,6 +20,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: '17'
+          distribution: 'temurin'
 
       # Setup Flutter (2.10.5 for Dart <3.0.0 support)
       - name: Setup Flutter
