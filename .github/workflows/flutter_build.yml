@@ -1,4 +1,4 @@
-name: CampusCar APK Build
+name: CampusCar Temporary APK Build
 
 on:
   push:
@@ -11,24 +11,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout repository
+      # 1️⃣ Checkout repository
       - name: Checkout source
         uses: actions/checkout@v3
 
-      # Setup Java 11 (compatible with Flutter 2.10.5 + Gradle 7.x)
+      # 2️⃣ Setup JDK (for Gradle)
       - name: Setup JDK 11
         uses: actions/setup-java@v3
         with:
           java-version: '11'
           distribution: 'temurin'
 
-      # Setup Flutter (2.10.5 for Dart <3.0.0 support)
+      # 3️⃣ Setup Flutter
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '2.10.5'
 
-      # Cache Flutter packages
+      # 4️⃣ Cache Flutter packages
       - name: Cache Flutter packages
         uses: actions/cache@v3
         with:
@@ -37,8 +37,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pub-
 
-      # Cache Gradle dependencies
-      - name: Cache Gradle packages
+      # 5️⃣ Cache Gradle
+      - name: Cache Gradle
         uses: actions/cache@v3
         with:
           path: |
@@ -48,31 +48,32 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      # Clean project
+      # 6️⃣ Clean project
       - name: Flutter clean
         run: flutter clean
 
-      # Install dependencies
-      - name: Install dependencies
+      # 7️⃣ Install dependencies
+      - name: Flutter pub get
         run: flutter pub get
 
-      # Build release APK with retry for network issues
+      # 8️⃣ Build release APK with retry (temporary-safe)
       - name: Build APK
         run: |
           retry_count=0
-          max_retries=3
+          max_retries=2
           until flutter build apk --release --ignore-deprecation || [ $retry_count -eq $max_retries ]; do
             retry_count=$((retry_count+1))
             echo "Build failed, retry $retry_count/$max_retries..."
             sleep 10
           done
 
-      # Upload the generated APK as artifact
+      # 9️⃣ Upload APK artifact
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: CampusCar-APK
           path: build/app/outputs/flutter-apk/app-release.apk
+
 
 
 
