@@ -38,9 +38,9 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      # Build release APK
-      - name: Build APK
-        run: flutter build apk --release
+      # Build release APK (ignore v1 embedding deprecation)
+      - name: Build APK (ignore v1 deprecation)
+        run: flutter build apk --release --ignore-deprecation
 
       # Upload the generated APK as artifact
       - name: Upload APK Artifact
